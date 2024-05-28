@@ -1,5 +1,6 @@
 ![build+test](https://github.com/izar/pytm/workflows/build%2Btest/badge.svg)
 
+delete me
 
 # pytm: A Pythonic framework for threat modeling
 

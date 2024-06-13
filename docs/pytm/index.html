@@ -338,7 +338,10 @@ Used to exclude threats on a per-element basis.</p></div>
     def __init__(self, name, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
-        self.name = name</code></pre>
+        self.name = name
+
+    def __str__(self):
+        return self.name</code></pre>
 </details>
 <h3>Instance variables</h3>
 <dl>
@@ -2978,7 +2981,7 @@ and holds all details during a run</p></div>
         doc=&#34;&#34;&#34;How to handle duplicate Dataflow
 with same properties, except name and notes&#34;&#34;&#34;,
     )
-    assumptions = varStrings(
+    assumptions = varAssumptions(
         [],
         required=False,
         doc=&#34;A list of assumptions about the design/model.&#34;,
@@ -3026,6 +3029,8 @@ with same properties, except name and notes&#34;&#34;&#34;,
         excluded_finding_count = 0
         findings = []
         excluded_findings = []
+        # We just need the assumptions with SIDs to exclude
+        global_assumptions = [a for a in self.assumptions if len(a.exclude) &gt; 0]
         elements = defaultdict(list)
         for e in TM._elements:
             if not e.inScope:
@@ -3049,7 +3054,7 @@ with same properties, except name and notes&#34;&#34;&#34;,
                     continue
 
                 _continue = False
-                for assumption in e.assumptions:  # type: Assumption
+                for assumption in e.assumptions + global_assumptions:  # type: Assumption
                     if t.id in assumption.exclude:
                         excluded_finding_count += 1
                         f = Finding(e, id=str(excluded_finding_count), threat=t, assumption=assumption)
@@ -3713,6 +3718,8 @@ with same properties, except name and notes</p></div>
     excluded_finding_count = 0
     findings = []
     excluded_findings = []
+    # We just need the assumptions with SIDs to exclude
+    global_assumptions = [a for a in self.assumptions if len(a.exclude) &gt; 0]
     elements = defaultdict(list)
     for e in TM._elements:
         if not e.inScope:
@@ -3736,7 +3743,7 @@ with same properties, except name and notes</p></div>
                 continue
 
             _continue = False
-            for assumption in e.assumptions:  # type: Assumption
+            for assumption in e.assumptions + global_assumptions:  # type: Assumption
                 if t.id in assumption.exclude:
                     excluded_finding_count += 1
                     f = Finding(e, id=str(excluded_finding_count), threat=t, assumption=assumption)

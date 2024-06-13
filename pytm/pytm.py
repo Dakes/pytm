@@ -1784,11 +1784,13 @@ is any information relating to an identifiable person.""",
     fontcolor = black;
     xlabel = "{label}";
     label = "";
+    width = 0.7;
+    height = 0.5;
 ]
 """
 
     def _shape(self):
-        return "none"
+        return "cylinder"
 
     def dfd(self, **kwargs):
         self._is_drawn = True

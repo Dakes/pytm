@@ -296,7 +296,11 @@ class TestTM(unittest.TestCase):
         web = Server(
             "Web Server",
             overrides=[
-                Finding(threat_id="Server", response="mitigated by adding TLS"),
+                Finding(
+                    threat_id="Server",
+                    response="mitigated by adding TLS",
+                    cvss="1.234",
+                ),
             ],
         )
         db = Datastore(
@@ -306,6 +310,7 @@ class TestTM(unittest.TestCase):
                 Finding(
                     threat_id="Datastore",
                     response="accepted since inside the trust boundary",
+                    cvss="9.876",
                 ),
             ],
         )
@@ -330,8 +335,16 @@ class TestTM(unittest.TestCase):
             [f.response for f in web.findings], ["mitigated by adding TLS"]
         )
         self.assertEqual(
+            [f.cvss for f in web.findings],
+            ["1.234"],
+        )
+        self.assertEqual(
             [f.response for f in db.findings],
             ["accepted since inside the trust boundary"],
+        )
+        self.assertEqual(
+            [f.cvss for f in db.findings],
+            ["9.876"],
         )
 
     def test_json_dumps(self):
@@ -436,9 +449,6 @@ class TestTM(unittest.TestCase):
 
         self.assertTrue(tm.check())
         output = tm.report("docs/basic_template.md")
-
-        with open(os.path.join(output_path, "output_current.md"), "w") as x:
-            x.write(output)
 
         with open(os.path.join(output_path, "output_current.md"), "w") as x:
             x.write(output)
